@@ -40,6 +40,7 @@ var mqttClient = {
             keepAliveInterval: keepAlive,
             cleanSession: Boolean(cleanSession == 'True'),
             useSSL: Boolean(ssl == 'True'),
+            invocationContext: {host : host, port: port, path: mqttClient.client.path, clientId: clientId},
             onSuccess: mqttClient.onConnect,
             onFailure: mqttClient.onFail
         };
@@ -61,22 +62,23 @@ var mqttClient = {
         mqttClient.client.connect(options);
     },
 
-    'onConnect': function () {
+    'onConnect': function (context) {
         mqttClient.connected = true;
-        console.log("Connected to ");
+        console.log("Connected to: "+context.invocationContext.host+":"+context.invocationContext.port);
+        console.log(context);   // debug
 
     },
 
-    'onFail': function (message) {
+    'onFail': function (context) {
         mqttClient.connected = false;
-        console.log("error: " + message.errorMessage);
+        console.log("Fail to connect: " + context.errorMessage);
 
     },
 
     'onConnectionLost': function (responseObject) {
         mqttClient.connected = false;
         if (responseObject.errorCode !== 0) {
-            console.log("onConnectionLost:" + responseObject.errorMessage);
+            console.log("Connection Lost: " + responseObject.errorMessage);
         }
 
         //Cleanup subscriptions
@@ -121,6 +123,8 @@ var mqttClient = {
         message.qos = qos;
         message.retained = Boolean(retain == 'True');
         mqttClient.client.send(message);
+        console.log('Message sent to '+message.destinationName +':'+payload );
+        console.log(message);   //debug
     },
 
     'subscribe': function (topic, qosNr, callback) {
@@ -145,6 +149,10 @@ var mqttClient = {
         var subscription = {'topic': topic, 'qos': qosNr, 'callback': callback};
         subscription.id = mqttClient.render.subscription(subscription);
         mqttClient.subscriptions.push(subscription);
+        
+        console.log('Subscribed to: '+subscription.topic);
+        console.log(subscription);  // debug
+        
         return true;
     },
 
@@ -153,13 +161,10 @@ var mqttClient = {
         var subs = _.find(mqttClient.subscriptions, {'topic': topic});
         mqttClient.client.unsubscribe(subs.topic);
         mqttClient.subscriptions = _.filter(mqttClient.subscriptions, function (item) {
-            return item.id != id;
+            return item.id != subs.id;
         });
-
-    },
-
-    'deleteSubscription': function (id) {
-        mqttClient.unsubscribe(id);
+        console.log('Topic unsubscribed: '+ subs.topic);
+        console.log(subs);  //debug
     },
 
     'getSubscriptionForTopic': function (topic) {

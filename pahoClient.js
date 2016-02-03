@@ -65,37 +65,6 @@ function onMessageArrived(message) {
   
   if (messageCallBack)
     messageCallBack(message);
-
-  /*
-  var messageTime = new Date().toISOString();
-  // Insert into History Table
-  var table = document.getElementById("incomingMessageTable").getElementsByTagName('tbody')[0];
-  var row = table.insertRow(0);
-  row.insertCell(0).innerHTML = message.destinationName;
-  row.insertCell(1).innerHTML = safe_tags_regex(message.payloadString);
-  row.insertCell(2).innerHTML = messageTime;
-  row.insertCell(3).innerHTML = message.qos;
-
-
-  if(!document.getElementById(message.destinationName)){
-      var lastMessageTable = document.getElementById("lastMessageTable").getElementsByTagName('tbody')[0];
-      var newlastMessageRow = lastMessageTable.insertRow(0);
-      newlastMessageRow.id = message.destinationName;
-      newlastMessageRow.insertCell(0).innerHTML = message.destinationName;
-      newlastMessageRow.insertCell(1).innerHTML = safe_tags_regex(message.payloadString);
-      newlastMessageRow.insertCell(2).innerHTML = messageTime;
-      newlastMessageRow.insertCell(3).innerHTML = message.qos;
-
-  } else {
-      // Update Last Message Table
-      var lastMessageRow = document.getElementById(message.destinationName);
-      lastMessageRow.id = message.destinationName;
-      lastMessageRow.cells[0].innerHTML = message.destinationName;
-      lastMessageRow.cells[1].innerHTML = safe_tags_regex(message.payloadString);
-      lastMessageRow.cells[2].innerHTML = messageTime;
-      lastMessageRow.cells[3].innerHTML = message.qos;
-  }
-*/
 }
 
 function connectionToggle(){
@@ -111,24 +80,6 @@ function connectionToggle(){
 
 
 function pahoConnect(hostname,port,clientId,path,user,pass,keepAlive,timeout,ssl,cleanSession,lastWillTopic,lastWillQos,lastWillRetain,lastWillMessage,statusSpanId){
-    /*
-    var hostname = document.getElementById("hostInput").value;
-    var port = document.getElementById("portInput").value;
-    var clientId = document.getElementById("clientIdInput").value;
-
-    var path = document.getElementById("pathInput").value;
-    var user = document.getElementById("userInput").value;
-    var pass = document.getElementById("passInput").value;
-    var keepAlive = Number(document.getElementById("keepAliveInput").value);
-    var timeout = Number(document.getElementById("timeoutInput").value);
-    var ssl = document.getElementById("sslInput").checked;
-    var cleanSession = document.getElementById("cleanSessionInput").checked;
-    var lastWillTopic = document.getElementById("lwtInput").value;
-    var lastWillQos = Number(document.getElementById("lwQosInput").value);
-    var lastWillRetain = document.getElementById("lwRetainInput").checked;
-    var lastWillMessage = document.getElementById("lwMInput").value;
-    */
-
     if(document.getElementById(statusSpanId))
         statusSpan = document.getElementById(statusSpanId);
     
@@ -190,54 +141,8 @@ function pahoDisconnect(){
 
 }
 
-// Sets various form controls to either enabled or disabled
-/*
-function setFormEnabledState(enabled){
-
-    // Connection Panel Elements
-    if(enabled){
-      document.getElementById("clientConnectButton").innerHTML = "Disconnect";
-    } else {
-      document.getElementById("clientConnectButton").innerHTML = "Connect";
-    }
-    document.getElementById("hostInput").disabled = enabled;
-    document.getElementById("portInput").disabled = enabled;
-    document.getElementById("clientIdInput").disabled = enabled;
-    document.getElementById("pathInput").disabled = enabled;
-    document.getElementById("userInput").disabled = enabled;
-    document.getElementById("passInput").disabled = enabled;
-    document.getElementById("keepAliveInput").disabled = enabled;
-    document.getElementById("timeoutInput").disabled = enabled;
-    document.getElementById("sslInput").disabled = enabled;
-    document.getElementById("cleanSessionInput").disabled = enabled;
-    document.getElementById("lwtInput").disabled = enabled;
-    document.getElementById("lwQosInput").disabled = enabled;
-    document.getElementById("lwRetainInput").disabled = enabled;
-    document.getElementById("lwMInput").disabled = enabled;
-
-    // Publish Panel Elements
-    document.getElementById("publishTopicInput").disabled = !enabled;
-    document.getElementById("publishQosInput").disabled = !enabled;
-    document.getElementById("publishMessageInput").disabled = !enabled;
-    document.getElementById("publishButton").disabled = !enabled;
-    document.getElementById("publishRetainInput").disabled = !enabled;
-
-    // Subscription Panel Elements
-    document.getElementById("subscribeTopicInput").disabled = !enabled;
-    document.getElementById("subscribeQosInput").disabled = !enabled;
-    document.getElementById("subscribeButton").disabled = !enabled;
-    document.getElementById("unsubscribeButton").disabled = !enabled;
-
-}
-*/
-
 function pahoPublish(topic,qos,message,retain){
-    /*
-    var topic = document.getElementById("publishTopicInput").value;
-    var qos = document.getElementById("publishQosInput").value;
-    var message = document.getElementById("publishMessageInput").value;
-    var retain = document.getElementById("publishRetainInput").checked
-    */
+
     console.info('Publishing Message: Topic: ', topic, '. QoS: ' + qos + '. Message: ', message);
     message = new Paho.MQTT.Message(message);
     message.destinationName = topic;
@@ -248,10 +153,7 @@ function pahoPublish(topic,qos,message,retain){
 
 
 function pahoSubscribe(topic,qos, subscribeCallback){
-    /*
-    var topic = document.getElementById("subscribeTopicInput").value;
-    var qos = document.getElementById("subscribeQosInput").value;
-    */
+
     console.info('Subscribing to: Topic: ', topic, '. QoS: ', qos);
      
     pahoClient.subscribe(topic, {qos: Number(qos)});
@@ -280,18 +182,6 @@ function unsubscribeSuccess(context){
 function unsubscribeFailure(context){
     console.info('Failed to  unsubscribe from ', context.invocationContext.topic);
 }
-
-/*
-function clearHistory(){
-    var table = document.getElementById("incomingMessageTable");
-    //or use :  var table = document.all.tableid;
-    for(var i = table.rows.length - 1; i > 0; i--)
-    {
-        table.deleteRow(i);
-    }
-
-}
-*/
 
 // Just in case someone sends html
 function safe_tags_regex(str) {
