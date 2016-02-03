@@ -63,7 +63,7 @@ var mqttClient = {
 
     'onConnect': function () {
         mqttClient.connected = true;
-        console.log("Connected");
+        console.log("Connected to ");
 
     },
 
