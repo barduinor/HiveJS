@@ -101,9 +101,13 @@ var mqttClient = {
         };
 
         console.log(messageObj);
-        console.log(subscription);
-        // TODO: Execute callback of specific subscription
-        subscription.callback(messageObj);
+        if(subscription){
+            console.log(subscription);
+            // TODO: Execute callback of specific subscription
+            subscription.callback(messageObj);
+        }else {
+            console.log('Subscription topic not found:'+message.destinationName);
+        }
     },
 
     'disconnect': function () {
