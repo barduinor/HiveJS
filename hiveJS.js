@@ -132,12 +132,7 @@ var mqttClient = {
     },
 
     'subscribe': function (topic, qosNr, callback) {
-
-        if (!mqttClient.connected) {
-            console.log("Not connected");
-            return false;
-        }
-
+                
         if (topic.length < 1) {
             console.log("Topic cannot be empty");
             return false;
@@ -147,10 +142,31 @@ var mqttClient = {
             console.log('You are already subscribed to this topic');
             return false;
         }
-
+        
+        if (!mqttClient.connected){
+            var a = setInterval(function(){
+                            console.log('Waiting for connection...');
+                            if(mqttClient.connected){
+                                clearInterval(a);
+                                clearTimeout(b);
+                                return mqttClient.completeSubscription(topic,qosNr,callback);
+                            }
+                        },500);
+                        
+            var b = setTimeout(function() {
+                clearInterval(a);
+                console.log('Unable to connect');
+            }, 3000);
+        }else {
+            return mqttClient.completeSubscription(topic,qosNr,callback);
+        }
+    },
+    'completeSubscription': function(topic,qosNr,callback){
+        
         mqttClient.client.subscribe(topic, {qos: qosNr});
-
+        
         var subscription = {'topic': topic, 'qos': qosNr, 'callback': callback};
+        
         subscription.id = mqttClient.render.subscription(subscription);
         mqttClient.subscriptions.push(subscription);
         
